@@ -1,0 +1,107 @@
+.table-container {
+    width: 100%;
+    max-width: 1200px;
+    margin: auto;
+
+    &.Products {
+      tr:nth-child(2n) {
+        background: rgb(232 220 240 / 50%);
+    }
+    }
+    &.Suppliers {
+      tr:nth-child(2n) {
+        background: #f3e1d294;
+    }
+    }
+    &.Orders {
+      tr:nth-child(2n) {
+        background: rgb(219 234 243 / 55%);
+    }
+    }
+    &.Customers {
+      tr:nth-child(2n) {
+        background: rgb(225 235 228 / 55%);
+    }
+    }
+  }
+  
+  .search-bar {
+    margin-bottom: 10px;
+    text-align: right;
+  }
+  
+  input {
+    width: 100%;
+    max-width: 400px;
+    padding: 8px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    font-size: 14px;
+  }
+  
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    background: #ffffff;
+    box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
+    border-radius: 8px;
+    overflow: hidden;
+  }
+  
+  th {
+    background-color: fff;
+    color: #404040;
+    padding: 12px;
+    text-align: left;
+    font-weight: bold;
+    cursor: pointer;
+    font-size: 14px;
+    border-bottom: 2px solid #fff;
+  }
+  
+  td {
+    padding: 10px;
+    border-bottom: 1px solid #ddd;
+    font-size: 13px;
+  }
+  
+  tr:hover {
+    background-color: #f4f4f4;
+  }
+  
+  .no-data {
+    text-align: center;
+    color: #888;
+    font-style: italic;
+    padding: 15px;
+  }
+  
+  .pagination {
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+    padding: 10px;
+    gap: 10px;
+
+    * {
+      font-size: 12px;
+    }
+  }
+  
+  button {
+    background-color: #314358;
+    color: white;
+    padding: 8px 12px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+  }
+  
+  button:disabled {
+    background-color: #ccc;
+    cursor: not-allowed;
+  }
+  
+  tr:nth-child(2n) {
+    background: rgba(15, 108, 189, 0.1411764706);
+}

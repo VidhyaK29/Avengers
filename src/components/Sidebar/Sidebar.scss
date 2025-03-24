@@ -1,0 +1,86 @@
+@import "../../styles/variables.scss";
+
+.sidebar {
+  width: 50px;
+  background-color: $primary-color;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  box-shadow: 4px 4px 20px rgba(0, 0, 0, 0.2);
+  z-index: 8;
+
+  h2 {
+    font-size: 14px;
+    margin: 0 0 5px 0;
+    color: $text-color;
+  }
+
+  ul {
+    list-style: none;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin: 15px 0;
+
+    li {
+      cursor: pointer;
+      transition: all 0.3s ease;
+      font-weight: 500;
+      line-height: 13px;
+      width: 30px;
+      height: 30px;
+      margin-bottom: 12px;
+      border-radius: 6px;
+
+      &:has(.active) {
+        background-color: $white;
+      }
+
+      &:hover {
+        background-color: #0066d5;
+        color: #fff;
+        border-radius: 6px;
+
+        a {
+          color: #fff;
+        }
+      }
+
+      a {
+        text-decoration: none;
+        font-size: 13px;
+        font-weight: 500;
+        display: flex;
+        align-items: center;
+        transition: all 0.3s ease;
+        background: transparent;
+        width: 100%;
+        height: 100%;
+        justify-content: center;
+        color: #404040;
+
+        .icon {
+          width: 15px;
+          height: 15px;
+        }
+      }
+
+      // Active link styling
+      .active {
+        background-color: #007aff;
+        color: #ffffff;
+        border-radius: 6px;
+
+        &:hover {
+          background-color: #0066d5;
+          color: #fff;
+        }
+
+        a {
+          color: $primary-color;
+        }
+      }
+    }
+  }
+}

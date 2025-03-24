@@ -1,0 +1,117 @@
+.dashboard-container {
+  background-color: #f8f9fa;
+  //min-height: 100vh;
+  margin-right: 5px;
+}
+
+.dashboard-title {
+  color: #333;
+  text-align: center;
+  margin: 10px 0 50px 0;
+  font-size: 16px;
+  font-weight: bold;
+}
+
+.tiles-container {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 20px;
+  width: 100%;
+  max-width: 1200px;
+  margin: 0 auto;
+  align-items: end;
+}
+
+.tile {
+  text-align: center;
+  padding: 10px;
+  border-radius: 12px;
+  cursor: pointer;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  font-size: 20px;
+  font-weight: bold;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  justify-content: space-between;
+  height: 80px;
+  position: relative;
+
+  .graph {
+    width: 60px;
+    height: 25px;
+    position: absolute;
+    bottom: 15px;
+    right: 10px;
+  }
+
+  &.active {
+    height: 100px;
+    border: 1px solid;
+  }
+
+  &.tile-products {
+    border-color: #8FD69E;
+  }
+
+  &.tile-suppliers {
+    border-color: #934BFF;
+  }
+
+  &.tile-orders {
+    border-color: #4B7BFF;
+  }
+
+  &.tile-customers {
+    border-color: #FF804B;
+  }
+  
+
+  .tiles-head {
+    display: flex;
+    align-items: center;
+
+    img {
+      width: 40px;
+      height: 40px;
+      margin-right: 10px;
+    }
+  }
+}
+
+.tile:hover {
+  transform: scale(1.05);
+  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
+}
+
+.tile-label {
+  font-size: 20px;
+  color: #555;
+  display: block;
+  padding-top: 10px;
+}
+
+.tile-value {
+  font-size: 18px;
+  font-weight: bold;
+  color: #222;
+}
+
+  .tile-value, .tile-label {
+    // background: linear-gradient(90deg, rgb(21, 44, 44) 0%, rgb(4, 2, 119) 100%);
+    // -webkit-background-clip: text;
+    //         background-clip: text;
+    // -webkit-text-fill-color: transparent;
+    color: #333333d4;
+  }
+
+/* Dashboard Content */
+.dashboard-content {
+  padding: 20px;
+  background: white;
+  border-radius: 10px;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+  max-width: 1200px;
+  margin: 20px auto 0;
+}
