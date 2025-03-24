@@ -59,6 +59,7 @@ export interface Supplier {
     receiver: string;
     message: string;
     to?: string;
+    logs?: [string];
     history?: History[];  // Optional conversation history
     draft?: Draft;        // Optional draft details
   }
