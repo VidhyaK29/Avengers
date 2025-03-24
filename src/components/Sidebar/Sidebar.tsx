@@ -1,7 +1,7 @@
 import React from "react";
 import { NavLink } from "react-router-dom";
 import "./Sidebar.scss";
-import { LayoutDashboard, Mail, MailPlus } from "lucide-react";
+import { Activity, LayoutDashboard, LineChart, Mail, MailPlus } from "lucide-react";
 
 const Sidebar: React.FC = () => {
   return (
@@ -20,6 +20,11 @@ const Sidebar: React.FC = () => {
         <li>
           <NavLink to="/inbox" className={({ isActive }) => isActive ? "active" : ""}>
           <Mail size={16} className="icon" />
+          </NavLink>
+        </li>
+        <li>
+        <NavLink to="/graph" className={({ isActive }) => isActive ? "active" : ""}>
+            <Activity size={16} className="icon" />  {/* Graph Icon */}
           </NavLink>
         </li>
       </ul>

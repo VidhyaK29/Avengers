@@ -11,6 +11,7 @@ import NewEmail from "./components/Email/NewEmail";
 import { WebSocketProvider } from "./context/WebSocketProvider";
 import NotificationComponent from "./components/Notification";
 import Login from "./components/Login/Login";
+import Graph from "./components/Graph/Graph";
 
 const App: React.FC = () => {
   const [selectedEmail, setSelectedEmail] = useState<Email | null>(null);
@@ -56,6 +57,8 @@ const App: React.FC = () => {
             <NotificationComponent />
             <Routes>
               <Route path="/" element={<Navigate to="/dashboard" />} />
+              <Route path="/graph" element={<Graph />} />
+
               <Route path="/dashboard" element={<Dashboard />} />
               {/* <Route path="/email" element={<NewEmail />} /> */}
               <Route
