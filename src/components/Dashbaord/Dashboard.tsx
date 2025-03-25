@@ -48,7 +48,11 @@ const Dashboard: React.FC = () => {
 
   return (
     <div className="dashboard-container">
-      <h1 className="dashboard-title">Hello Avengers !! Key Insights are now available</h1>
+      <div className="dashboardHead">
+        <h1 className="dashboard-title">Hello Avengers !!</h1>
+        <p>Your Key Insights are now available</p>
+        <h4>Overview</h4>
+      </div>
 
       <div className="tiles-container">
         <div className={`tile tile-products ${activeSection === "products" ? "active" : ""}`} onClick={() => setActiveSection("products")}>

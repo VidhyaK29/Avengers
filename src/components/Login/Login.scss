@@ -18,14 +18,16 @@
 }
 
 .login-image {
-    background-image: url('../../../public/assets/login_bg.PNG'); // Replace with your actual path
+    background-image: url('../../../public/assets/login.png'); // Replace with your actual path
     background-size: cover;
     background-position: center;
     height: 100%;
     width: 75%;
     background-repeat: no-repeat;
 }
-
+.login-form-header {
+    margin-bottom: 20px;
+}
 .login-form {
     padding: 30px;
     display: flex;

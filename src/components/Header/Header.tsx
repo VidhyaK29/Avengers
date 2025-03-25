@@ -47,7 +47,7 @@ const Header: React.FC<HeaderProps> = ({ setIsAuthenticated }) => {
   return (
     <header className="header">
       <div className="header-left">
-        <h2>Supply Chain Management</h2>
+        <img src="/assets/Jarvis.png"></img>
       </div>
       <div className="header-right">
         <div className="icons">
@@ -55,7 +55,7 @@ const Header: React.FC<HeaderProps> = ({ setIsAuthenticated }) => {
           <Settings size={24} className="cursor-pointer" />
           <LogOut size={24} className="cursor-pointer" onClick={handleLogout} />
           <img
-            src="/assets/user-avatar.png"
+            src="/assets/user.png"
             width="32"
             height="32"
             alt="User Profile"

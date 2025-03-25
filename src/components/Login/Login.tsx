@@ -30,7 +30,7 @@ const Login: React.FC<{ onLogin: () => void }> = ({ onLogin }) => {
             const customerData = await appDataService.fetchCustomerDetails();
             sessionStorage.setItem('customerData', JSON.stringify(customerData));
             onLogin();
-            navigate('/dashboard');
+            navigate('/inbox');
         } catch (error) {
             setError('Login failed. Customer not found.');
         }
@@ -41,8 +41,11 @@ const Login: React.FC<{ onLogin: () => void }> = ({ onLogin }) => {
             <div className="login-container">
                 <div className="login-image"></div>
                 <div className="login-form">
-                    <h1>Jarvis</h1>
-                    <h2>Login</h2>
+                    <div className='login-form-header'>
+                    <img src="/assets/Jarvis.png"></img>
+
+                    </div>
+                <h2>Login</h2>
                     <div className="input-group">
                         <label htmlFor="userId">Username</label>
                         <input

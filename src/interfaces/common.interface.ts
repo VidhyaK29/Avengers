@@ -43,26 +43,36 @@ export interface Supplier {
     timestamp: string;
     subject: string;
   }
-  
   export interface Draft {
     subject: string;
-    to: string
+    to: string;
     cc: string;
     messageContext: string;
+    id: string;           // Optional, could be part of Draft when it's converted to an Email
+    sender: string;       // Optional, sender could also be included in Draft
+    timestamp: string;    // Optional, timestamp could be relevant to Draft
+    receiver: string;     // Optional, receiver information in Draft
+    message: string;      // Optional, message content for Draft
   }
-  
   export interface Email {
     id: string;
     sender: string;
+    messageContext?: string;
     subject: string;
     timestamp: string;
     receiver: string;
     message: string;
     to?: string;
-    logs?: [string];
+    traceLogs?: LogEntry[];
     history?: History[];  // Optional conversation history
     draft?: Draft;        // Optional draft details
   }
+  export interface LogEntry {
+    status: string;
+    agent: string;
+    response: any;
+  }
+  
   
   
   // interfaces/common.interface.ts

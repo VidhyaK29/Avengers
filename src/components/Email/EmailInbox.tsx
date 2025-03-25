@@ -1,20 +1,49 @@
 import { useState, useEffect } from "react";
-import { Email, Draft } from "../../interfaces/common.interface"; // Import the Draft interface
+import { Draft, Email } from "../../interfaces/common.interface";
 import "./EmailInbox.scss";
-import {appDataService} from "../../services/app.data.service";
+import { appDataService } from "../../services/app.data.service";
 import NewEmail from "./NewEmail";
 
 interface EmailInboxProps {
   onSelectEmail: (email: Email, isDraft: boolean, isNewEmail?: boolean) => void;
   setFetchEmails: (fetchEmails: () => void) => void;
+  openRequestId: string | null;
 }
+
+
+const COLOR_PALETTE = [
+  '#4ECDC4', '#45B7D1', '#FDCB6E', '#6C5CE7', '#FF8A5B',
+  '#2ECC71', '#AF7AC5', '#5DADE2', '#F1948A', '#48C9B0', '#EC7063',
+  '#7D3C98', '#229954', '#D35400', '#16A085', '#2980B9', 
+  '#8E44AD', '#F39C12', '#D35400', '#C0392B', '#27AE60'
+];
+
+const generateAvatarColor = (sender: string): string => {
+  let hash = 0;
+  
+  // Improved hash calculation using bitwise operations and character codes
+  for (let i = 0; i < sender.length; i++) {
+    hash = ((hash << 5) - hash) + sender.charCodeAt(i);
+    hash = hash & hash; // Convert to 32-bit integer
+  }
+
+  // Ensure colors are distributed evenly using the modulus operation
+  let colorIndex = Math.abs(hash) % COLOR_PALETTE.length;
+
+  // Optional: Use sender length to add a diversity factor to further differentiate
+  const diversityFactor = (sender.length % 5) + 1;  // Range from 1 to 5
+  colorIndex = (colorIndex + diversityFactor) % COLOR_PALETTE.length;
+
+  return COLOR_PALETTE[colorIndex];
+};
+
 
 const formatTimestamp = (timestamp: string) => {
   const date = new Date(timestamp);
   return new Intl.DateTimeFormat("en-US", {
-    weekday: "short", // e.g., Wed
-    month: "numeric", // e.g., 3
-    day: "numeric", // e.g., 12
+    weekday: "short",
+    month: "numeric",
+    day: "numeric",
   }).format(date);
 };
 
@@ -46,56 +75,74 @@ const parseOutgoingEmail = (outgoingEmail: string) => {
   };
 };
 
-
-const EmailInbox: React.FC<EmailInboxProps> = ({ onSelectEmail, setFetchEmails }) => {
+const EmailInbox: React.FC<EmailInboxProps> = ({ onSelectEmail, setFetchEmails, openRequestId }) => {
   const [emails, setEmails] = useState<Email[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
   const [expandedEmails, setExpandedEmails] = useState<{ [key: string]: boolean }>({});
   const [selectedEmailId, setSelectedEmailId] = useState<string | null>(null);
   const [showNewEmailDialog, setShowNewEmailDialog] = useState<boolean>(false);
+
   const fetchEmails = async () => {
     try {
       const dataToreverse: Email[] = await appDataService.fetchEmails();
       const data = dataToreverse.reverse();
       const transformedEmails: Email[] = data.map((item: any) => {
-        const { subject: incomingSubject, from: incomingFrom, to: incomingTo, body: incomingBody } =
-          parseIncomingEmail(item.incoming_email);
-    
+        const { subject: incomingSubject, from: incomingFrom, to: incomingTo, body: incomingBody } = parseIncomingEmail(item.incoming_email);
+      
         let outgoingSubject = "";
         let outgoingFrom = "";
         let outgoingTo = "";
         let outgoingBody = "";
-    
+      
+        // Parse outgoing email if available
         if (item.outgoing_email) {
-          ({ subject: outgoingSubject, from: outgoingFrom, to: outgoingTo, body: outgoingBody } =
-            parseOutgoingEmail(item.outgoing_email));
+          ({ subject: outgoingSubject, from: outgoingFrom, to: outgoingTo, body: outgoingBody } = parseOutgoingEmail(item.outgoing_email));
         }
+      
+        // Return the transformed email
         return {
-          id: item.id,
-          sender: incomingFrom,
-          receiver: incomingTo,
-          subject: incomingSubject,
-          timestamp: item.created_time,
-          message: incomingBody,
+          id: item.id || "", // Default to empty string if id is missing
+          sender: incomingFrom || "", // Default to empty string if sender is missing
+          receiver: incomingTo || "", // Default to empty string if receiver is missing
+          subject: incomingSubject || "", // Default to empty string if subject is missing
+          timestamp: item.created_time || "", // Default to empty string if timestamp is missing
+          traceLogs: item.traceLogs || [], // Default to an empty array if traceLogs is missing
+          message: incomingBody || "", // Default to empty string if message is missing
           draft: item.outgoing_email ? {
-            subject: outgoingSubject,
-            from: outgoingFrom,
-            to: outgoingTo,
-            body: outgoingBody,
-            cc: "",
-            messageContext: outgoingBody, 
+            subject: outgoingSubject || "", // Default to empty string if outgoingSubject is missing
+            to: outgoingTo || "", // Default to empty string if outgoingTo is missing
+            cc: "", // Default to empty string if cc is missing
+            messageContext: outgoingBody || "", // Default to empty string if messageContext is missing
+            id: "", // Default to empty string if id is missing
+            sender: outgoingFrom || "", // Default to empty string if sender is missing
+            timestamp: item.created_time || "", // Default to empty string if timestamp is missing
+            receiver: incomingTo || "", // Default to empty string if receiver is missing
+            message: outgoingBody || "", // Default to empty string if message is missing
           } : undefined,
-          history: undefined,
+          history: undefined, // No history available, can be set to undefined
         };
       });
+      
       setEmails(transformedEmails);
-      if (transformedEmails.length > 0) {
+      
+      // If there's an openRequestId, find and select that email
+      if (openRequestId) {
+        const targetEmail = transformedEmails.find(email => email.id === openRequestId);
+        if (targetEmail) {
+          setExpandedEmails(prev => ({ ...prev, [targetEmail.id]: true }));
+          handleEmailClick(targetEmail, true);
+        } else if (transformedEmails.length > 0) {
+          handleEmailClick(transformedEmails[0], true);
+
+        }
+      } else if (transformedEmails.length > 0) {
         setSelectedEmailId(transformedEmails[0].id);
         onSelectEmail(transformedEmails[0], false);
       }
     } catch (error) {
       console.error("Error fetching emails:", error);
+      setError("Failed to load emails");
     } finally {
       setLoading(false);
     }
@@ -103,9 +150,21 @@ const EmailInbox: React.FC<EmailInboxProps> = ({ onSelectEmail, setFetchEmails }
 
   useEffect(() => {
     fetchEmails();
-    setFetchEmails(() => fetchEmails); // Pass fetchEmails to App
-  }, [setFetchEmails]);
+    setFetchEmails(() => fetchEmails);
+  }, [setFetchEmails, openRequestId]);
 
+  useEffect(() => {
+    // If openRequestId changes, find and select the corresponding email
+    if (openRequestId && emails.length > 0) {
+      const targetEmail = emails.find(email => email.id === openRequestId);
+      if (targetEmail) {
+        setSelectedEmailId(`targetEmail.id-draft`,);
+        if(targetEmail.draft)
+        onSelectEmail(targetEmail.draft, true);
+        setExpandedEmails(prev => ({ ...prev, [targetEmail.id]: true }));
+      }
+    }
+  }, [openRequestId, emails]);
 
   const toggleEmail = (emailId: string) => {
     setExpandedEmails((prevState) => ({
@@ -116,13 +175,16 @@ const EmailInbox: React.FC<EmailInboxProps> = ({ onSelectEmail, setFetchEmails }
 
   const handleEmailClick = (email: Email, isDraft: boolean) => {
     setSelectedEmailId(isDraft ? `${email.id}-draft` : email.id);
-    onSelectEmail(email, isDraft);
+    
+    onSelectEmail((isDraft && email.draft) ? email.draft : email, isDraft);
+  
   };
+  
+
   const handleComposeNewEmail = () => {
     setShowNewEmailDialog(true);
   };
 
-  // Function to close the dialog
   const handleCloseDialog = () => {
     setShowNewEmailDialog(false);
   };
@@ -137,8 +199,7 @@ const EmailInbox: React.FC<EmailInboxProps> = ({ onSelectEmail, setFetchEmails }
 
   return (
     <div className="email-inbox">
-  <button onClick={handleComposeNewEmail}>Compose New Email</button>
-  <button onClick={handleComposeNewEmail}>Voice</button>
+      <button className="compose-newemail" onClick={handleComposeNewEmail}>Compose New Email</button>
       <div className="email-list">
         {emails.map((email) => (
           <div key={email.id} className={`email-item ${selectedEmailId === email.id ? "active" : ""}`}>
@@ -148,7 +209,15 @@ const EmailInbox: React.FC<EmailInboxProps> = ({ onSelectEmail, setFetchEmails }
                   {expandedEmails[email.id] ? "▲" : "▼"}
                 </button>
               )}
-              <div className="avatar">{email.sender[0]}</div>
+              <div
+                className="avatar"
+                style={{
+                  backgroundColor: generateAvatarColor(email.sender),
+                  color: 'black',
+                }}
+              >
+                {email.sender[0].toUpperCase()}
+              </div>
               <div className="sender-info">
                 <span className="sender" onClick={() => handleEmailClick(email, false)}>
                   {email.sender}
@@ -169,7 +238,7 @@ const EmailInbox: React.FC<EmailInboxProps> = ({ onSelectEmail, setFetchEmails }
                     onClick={() => handleEmailClick(email, true)}
                   >
                     <div className="email-header">
-                      <span className="sender draft-label">[Draft] -</span>  <span className="draft-header">{email.draft.subject}</span>
+                      <span className="sender draft-label">[Draft] -</span> <span className="draft-header">{email.draft.subject}</span>
                     </div>
                     <div className="email-message">{email.draft.messageContext}</div>
                   </div>
@@ -194,7 +263,7 @@ const EmailInbox: React.FC<EmailInboxProps> = ({ onSelectEmail, setFetchEmails }
           </div>
         ))}
       </div>
-      {showNewEmailDialog && <NewEmail  />}
+      {showNewEmailDialog && <NewEmail onClose={handleCloseDialog} onRefresh={fetchEmails} />}
     </div>
   );
 };

@@ -16,7 +16,8 @@ import Graph from "./components/Graph/Graph";
 const App: React.FC = () => {
   const [selectedEmail, setSelectedEmail] = useState<Email | null>(null);
   const [isDraft, setIsDraft] = useState<boolean>(false);
-  const [fetchEmails, setFetchEmails] = useState<() => void>(() => {});
+  const [fetchEmails, setFetchEmails] = useState<() => void>(() => {});  // Can be used to fetch emails
+  const [openRequestId, setOpenRequestId] = useState<string | null>(null); // Store the requestId for the draft
   const [isAuthenticated, setIsAuthenticated] = useState<boolean>(Boolean(sessionStorage.getItem("userId")));
 
   const location = useLocation();
@@ -41,11 +42,22 @@ const App: React.FC = () => {
       <Login
         onLogin={() => {
           setIsAuthenticated(true);
-          navigate("/dashboard", { state: { fromLogin: true } });
+          navigate("/inbox", { state: { fromLogin: true } });
         }}
       />
     );
   }
+
+  // Pass setFetchEmails with requestId to NotificationComponent
+  const handleFetchEmails = (requestId?: string) => {
+    if (requestId) {
+      setOpenRequestId(requestId); // Store the requestId
+      // Optional: you can use this requestId to filter or fetch a specific draft email
+      // You may want to trigger fetching emails here if needed
+    } else {
+      setOpenRequestId(null); // Reset if no requestId
+    }
+  };
 
   return (
     <div className="app">
@@ -54,13 +66,12 @@ const App: React.FC = () => {
         <Sidebar />
         <div className="main-content">
           <WebSocketProvider>
-            <NotificationComponent />
+            <NotificationComponent setFetchEmails={handleFetchEmails} />
+
             <Routes>
               <Route path="/" element={<Navigate to="/dashboard" />} />
               <Route path="/graph" element={<Graph />} />
-
               <Route path="/dashboard" element={<Dashboard />} />
-              {/* <Route path="/email" element={<NewEmail />} /> */}
               <Route
                 path="/inbox"
                 element={
@@ -71,6 +82,7 @@ const App: React.FC = () => {
                         setIsDraft(draft);
                       }}
                       setFetchEmails={setFetchEmails}
+                      openRequestId={openRequestId} // Pass openRequestId to EmailInbox
                     />
                     <EmailDetails email={selectedEmail} isDraft={isDraft} refreshEmails={fetchEmails} />
                   </div>

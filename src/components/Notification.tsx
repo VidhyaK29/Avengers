@@ -3,28 +3,44 @@ import { WebSocketContext } from "../context/WebSocketProvider";
 import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css"; // Import styles
 
-interface WebSocketContextType {
-    messages: string[];
+interface WebSocketMessage {
+  id: string;
+  message: string;
+  timestamp: string;
+  agent: string; // Add agent
+  requestId: string; // Add requestId
 }
 
-const NotificationComponent: React.FC = () => {
-    const context = useContext(WebSocketContext) as WebSocketContextType | null;
+interface WebSocketContextType {
+  context: WebSocketMessage[];
+}
 
-    // Memoizing messages to ensure stable reference
-    const messages = useMemo(() => context?.messages ?? [], [context?.messages]);
+interface NotificationComponentProps {
+  setFetchEmails: (requestId?: string) => void; // Accept optional requestId
+}
 
-    useEffect(() => {
-        if (messages.length > 0) {
-            const latestMessage = messages[messages.length - 1];
-            customFunction(latestMessage);
-        }
-    }, [messages]);
+const NotificationComponent: React.FC<NotificationComponentProps> = ({ setFetchEmails }) => {
+  const context = useContext(WebSocketContext) as WebSocketContextType | null;
 
-    const customFunction = (message: string) => {
-        console.log(message);
-    };
+  const messages = useMemo(() => context?.context ?? [], [context?.context]);
 
-    return <></>;
+  useEffect(() => {
+    if (messages.length > 0) {
+      const latestMessage = messages[messages.length - 1];
+      customFunction(latestMessage);
+    }
+  }, [messages]);
+
+  const customFunction = (message: WebSocketMessage) => {
+    console.log("Latest Message:", message);
+    toast(message.message); // Display the message content as a toast notification
+    
+    if (message.agent === "email_agent") {
+      setFetchEmails(message.requestId); // Pass the requestId if agent is email_agent
+    }
+  };
+
+  return <></>; // No UI rendered, just side effects
 };
 
 export default NotificationComponent;

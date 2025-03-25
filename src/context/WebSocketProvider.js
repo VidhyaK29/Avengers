@@ -3,7 +3,7 @@ import React, { createContext, useEffect, useState } from "react";
 export const WebSocketContext = createContext(null);
 
 export const WebSocketProvider = ({ children }) => {
-    const [messages, setMessages] = useState([]);
+    const [context, setContext] = useState([]);
     const serverUrl = "ws://34.217.6.27:8080"; // Replace with your WebSocket URL
 
     useEffect(() => {
@@ -15,8 +15,8 @@ export const WebSocketProvider = ({ children }) => {
 
         socket.onmessage = (event) => {
             const data = JSON.parse(event.data);
-            console.log("📩 Message received:", data.message);
-            setMessages((prev) => [...prev, data.message]);
+            console.log("📩 Message received:", data);
+            setContext((prev) => [...prev, data]);
         };
 
         socket.onclose = () => {
@@ -28,7 +28,7 @@ export const WebSocketProvider = ({ children }) => {
 
 
     return (
-        <WebSocketContext.Provider value={{ messages }}>
+        <WebSocketContext.Provider value={{ context }}>
             {children}
         </WebSocketContext.Provider>
     );
